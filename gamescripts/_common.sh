@@ -60,6 +60,16 @@ ll_runtime() {
       return 0
     fi
   fi
+  if [[ "$prefer" == "auto" ]]; then
+    if command -v proton >/dev/null 2>&1; then
+      printf 'proton\n'
+      return 0
+    fi
+    if command -v umu-run >/dev/null 2>&1; then
+      printf 'umu-run\n'
+      return 0
+    fi
+  fi
   return 1
 }
 

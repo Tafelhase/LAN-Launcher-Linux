@@ -17,4 +17,3 @@ ll_notice_firewall_programs
 ll_run_windows auto "RVTLaunch_jc3mp.exe"
 ll_sleep 30
 ll_pause
-ll_kill_process Steam.exe

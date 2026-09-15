@@ -11,7 +11,7 @@ case "$game_lang" in
   fr) lang='3'; ll_copy_glob "$LOCAL_DIR/language/fr/uo/*" "$LOCAL_DIR/uo"; ll_copy_glob "$LOCAL_DIR/language/fr/main/*" "$LOCAL_DIR/main" ;;
   *) lang='1' ;;
 esac
-win_game_path="$(ll_windows_path "$SCRIPT_DIR")"
+win_game_path="$(ll_windows_path "$LOCAL_DIR")"
 ll_reg_add "HKLM\SOFTWARE\WOW6432Node\Activision\Call of Duty United Offensive" "Language" "REG_SZ" "$lang"
 ll_reg_add "HKLM\SOFTWARE\WOW6432Node\Activision\Call of Duty United Offensive" "Version" "REG_SZ" "1.15"
 ll_reg_add "HKLM\SOFTWARE\WOW6432Node\Activision\Call of Duty United Offensive" "InstallPath" "REG_SZ" "$win_game_path"
