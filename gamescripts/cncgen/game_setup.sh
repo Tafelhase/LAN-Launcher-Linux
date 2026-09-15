@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+set -euo pipefail
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=../_common.sh
+source "${SCRIPT_DIR}/../_common.sh"
+ll_init "$@"
+cd "$LOCAL_DIR"
+base_win_path="$(ll_windows_path "$LOCAL_DIR")"
+zh_win_path="$(ll_windows_path "$LOCAL_DIR/ZeroHour")"
+ll_reg_add "HKLM\SOFTWARE\Wow6432Node\Electronic Arts\EA GAMES\Generals" "InstallPath" "REG_SZ" "$base_win_path\\"
+ll_reg_add "HKLM\SOFTWARE\Wow6432Node\Electronic Arts\EA GAMES\Generals" "MapPackVersion" "REG_DWORD" "65536"
+ll_reg_add "HKLM\SOFTWARE\Wow6432Node\Electronic Arts\EA GAMES\Generals" "Version" "REG_DWORD" "65536"
+ll_reg_add "HKLM\SOFTWARE\Wow6432Node\Electronic Arts\EA GAMES\Generals\ergc" "@" "REG_SZ" "1842146827383645571735"
+ll_reg_add "HKLM\SOFTWARE\Wow6432Node\Electronic Arts\EA GAMES\Command and Conquer Generals Zero Hour" "UserDataLeafName" "REG_SZ" "Command and Conquer Generals Zero Hour Data"
+ll_reg_add "HKLM\SOFTWARE\Wow6432Node\Electronic Arts\EA GAMES\Command and Conquer Generals Zero Hour" "Version" "REG_DWORD" "65536"
+ll_reg_add "HKLM\SOFTWARE\Wow6432Node\Electronic Arts\EA GAMES\Command and Conquer Generals Zero Hour" "MapPackVersion" "REG_DWORD" "65536"
+ll_reg_add "HKLM\SOFTWARE\Wow6432Node\Electronic Arts\EA GAMES\Command and Conquer Generals Zero Hour" "InstallPath" "REG_SZ" "$zh_win_path\\"
+ll_reg_add "HKLM\SOFTWARE\Wow6432Node\Electronic Arts\EA GAMES\Command and Conquer Generals Zero Hour\ergc" "@" "REG_SZ" "PDWWHYA4TPQDT8KTZC3J"
+cd "$SCRIPT_DIR"
+ll_run_windows wine "../cncgenuserdata.exe"
+ll_run_windows_bg wine "../keygen.exe"
