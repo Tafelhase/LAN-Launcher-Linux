@@ -52,20 +52,11 @@ ll_runtime() {
       printf 'umu-run\n'
       return 0
     fi
+    return 1
   fi
-  if [[ "$prefer" == "auto" || "$prefer" == "wine" || "$prefer" == "proton" ]]; then
+  if [[ "$prefer" == "auto" || "$prefer" == "wine" ]]; then
     if command -v wine >/dev/null 2>&1; then
       printf 'wine\n'
-      return 0
-    fi
-  fi
-  if [[ "$prefer" == "auto" ]]; then
-    if command -v proton >/dev/null 2>&1; then
-      printf 'proton\n'
-      return 0
-    fi
-    if command -v umu-run >/dev/null 2>&1; then
-      printf 'umu-run\n'
       return 0
     fi
   fi
@@ -86,10 +77,10 @@ ll_run_windows() {
       WINEPREFIX="$WINEPREFIX" wine "$exe" "$@"
       ;;
     proton)
-      proton run "$exe" "$@"
+      WINEPREFIX="$WINEPREFIX" proton run "$exe" "$@"
       ;;
     umu-run)
-      umu-run "$exe" "$@"
+      WINEPREFIX="$WINEPREFIX" umu-run "$exe" "$@"
       ;;
   esac
 }
@@ -126,7 +117,10 @@ ll_copy_glob() {
   local dst="$2"
   mkdir -p "$dst"
   shopt -s nullglob
-  local matches=($pattern)
+  local matches=()
+  while IFS= read -r match; do
+    matches+=("$match")
+  done < <(compgen -G "$pattern" || true)
   if (( ${#matches[@]} )); then
     cp -fR "${matches[@]}" "$dst/"
   fi
@@ -141,6 +135,14 @@ ll_move() {
 ll_delete() { rm -rf "$@"; }
 ll_edit() {
   local file="$1"
+  if [[ -d "$file" ]]; then
+    if command -v xdg-open >/dev/null 2>&1; then
+      xdg-open "$file" >/dev/null 2>&1 || true
+    else
+      ll_warn "xdg-open is required to open directories like $file"
+    fi
+    return 0
+  fi
   mkdir -p "$(dirname "$file")"
   touch "$file"
   if command -v xdg-open >/dev/null 2>&1; then

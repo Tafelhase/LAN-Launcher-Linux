@@ -31,5 +31,5 @@ fi
 sconfig="$(ll_prompt 'Edit the server config file first? (y/n) ')"
 [[ "$sconfig" == 'y' ]] && ll_edit "$server_cfg"
 ll_open_port ${gameport}/udp
-ll_run_windows auto "iw4x.exe" -dedicated +set fs_game "$modfoldername" +set sv_lanonly 1 +set net_port "$gameport" +exec serverlan.cfg +set party_enable "$partyenable" +map_rotate
 ll_delete "$LOCAL_DIR/updater.exe"
+ll_run_windows auto "iw4x.exe" -dedicated +set fs_game "$modfoldername" +set sv_lanonly 1 +set net_port "$gameport" +exec serverlan.cfg +set party_enable "$partyenable" +map_rotate

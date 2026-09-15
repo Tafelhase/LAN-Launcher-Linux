@@ -10,13 +10,13 @@ while true; do
   cat <<'EOF'
 Gang Beasts Server
   1. Start server
-  2. Edit settings.txt
+  2. Edit config.json
   3. Exit
 EOF
   choice="$(ll_prompt 'Selection: ')"
   case "$choice" in
-    1) ll_run_windows auto "GangBeastsServer.exe"; exit 0 ;;
-    2) ll_edit "$LOCAL_DIR/settings.txt" ;;
+    1) (cd "$LOCAL_DIR/Gang Beasts Server" && ll_run_windows auto "Wrapper.exe"); exit 0 ;;
+    2) ll_edit "$LOCAL_DIR/Gang Beasts Server/game/GangBeasts_Data/Config/Server/config.json" ;;
     3) exit 0 ;;
   esac
 done

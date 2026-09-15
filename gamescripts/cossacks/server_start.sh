@@ -6,6 +6,9 @@ source "${SCRIPT_DIR}/../_common.sh"
 ll_init "$@"
 ll_notice_firewall_programs
 cd "$SCRIPT_DIR"
-cd "server"
-ll_run_windows auto "cossacks_server.exe"
+if [[ ! -d "$SCRIPT_DIR/server" ]]; then
+  ll_run_windows auto "cossacks_server.exe"
+  ll_sleep 5
+fi
+cd "$SCRIPT_DIR/server"
 ll_run_windows auto "Cossacks3LanServer.exe"

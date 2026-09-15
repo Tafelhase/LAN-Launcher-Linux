@@ -5,19 +5,40 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "${SCRIPT_DIR}/../_common.sh"
 ll_init "$@"
 cd "$LOCAL_DIR"
-ll_copy "$LOCAL_DIR/LANucher.exe" "$LOCAL_DIR/cnc4.exe"
+case "$game_lang" in
+  de)
+    lang="German"
+    prompt="IP des CNC4-Servers (der Host muss 127.0.0.1 angeben): "
+    ;;
+  fr)
+    lang="French"
+    prompt="IP du serveur CNC4: "
+    ;;
+  *)
+    lang="English"
+    prompt="CNC4 server IP: "
+    ;;
+esac
 while true; do
-  ll_clear
-  cat <<'EOF'
-Command & Conquer 4
-  1. Start
-  2. Delete launcher override
-  3. Exit
-EOF
-  choice="$(ll_prompt 'Selection: ')"
-  case "$choice" in
-    1) ll_notice_firewall_programs; ll_run_windows auto "cnc4.exe"; exit 0 ;;
-    2) ll_delete "$LOCAL_DIR/cnc4.exe" ;;
-    3) exit 0 ;;
-  esac
+  serverip="$(ll_prompt "$prompt")"
+  [[ -n "$serverip" ]] && break
 done
+hosts_dir="$WINEPREFIX/drive_c/windows/system32/drivers/etc"
+hosts_file="$hosts_dir/hosts"
+backup_file="$hosts_dir/hosts.cnc4"
+mkdir -p "$hosts_dir"
+{
+  printf '%s gosredirector.ea.com\n' "$serverip"
+  printf '%s blazeserver.blazeemu.org\n' "$serverip"
+  printf '%s gosgvaprod-qos01.ea.com\n' "$serverip"
+  printf '%s gosiadprod-qos01.ea.com\n' "$serverip"
+  printf '%s gossjcprod-qos01.ea.com\n' "$serverip"
+  printf '%s demangler.ea.com\n' "$serverip"
+  printf '%s vmp.tools.gos.ea.com\n' "$serverip"
+} > "$SCRIPT_DIR/hosts.src"
+[[ -f "$hosts_file" ]] && cp -f "$hosts_file" "$backup_file"
+cp -f "$SCRIPT_DIR/hosts.src" "$hosts_file"
+trap 'if [[ -f "'"$backup_file"'" ]]; then cp -f "'"$backup_file"'" "'"$hosts_file"'"; rm -f "'"$backup_file"'"; else rm -f "'"$hosts_file"'"; fi; rm -f "'"$SCRIPT_DIR"'/hosts.src"' EXIT
+playerid=$(( (RANDOM % 10) + 1 ))
+ll_notice_firewall_programs
+ll_run_windows auto "Data/CNC4.exe" -config "../CNC4_${lang}.SkuDef" -loginToken "player${playerid}@eti.lan|random" -persona "Spieler ${playerid}"
